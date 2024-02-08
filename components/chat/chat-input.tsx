@@ -34,7 +34,6 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     chatMessages,
     isGenerating,
     selectedPreset,
-    selectedAssistant,
     focusPrompt,
     setFocusPrompt,
     focusFile,
@@ -62,7 +61,7 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     setTimeout(() => {
       handleFocusChatInput()
     }, 200) // FIX: hacky
-  }, [selectedPreset, selectedAssistant, handleFocusChatInput])
+  }, [selectedPreset, handleFocusChatInput])
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (!isTyping && event.key === "Enter" && !event.shiftKey) {

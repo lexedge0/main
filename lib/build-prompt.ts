@@ -5,14 +5,9 @@ import { encode } from "gpt-tokenizer"
 const buildBasePrompt = (
   prompt: string,
   profileContext: string,
-  workspaceInstructions: string,
-  assistant: Tables<"assistants"> | null
+  workspaceInstructions: string
 ) => {
   let fullPrompt = ""
-
-  if (assistant) {
-    fullPrompt += `<INJECT ROLE>\nYou are not an AI. You are ${assistant.name}.\n</INJECT ROLE>\n\n`
-  }
 
   fullPrompt += `Today is ${new Date().toLocaleDateString()}.\n\n`
 
@@ -38,7 +33,6 @@ export async function buildFinalMessages(
     chatSettings,
     workspaceInstructions,
     chatMessages,
-    assistant,
     messageFileItems,
     chatFileItems
   } = payload
@@ -46,8 +40,7 @@ export async function buildFinalMessages(
   const BUILT_PROMPT = buildBasePrompt(
     chatSettings.prompt,
     chatSettings.includeProfileContext ? profile.profile_context || "" : "",
-    chatSettings.includeWorkspaceInstructions ? workspaceInstructions : "",
-    assistant
+    chatSettings.includeWorkspaceInstructions ? workspaceInstructions : ""
   )
 
   const CHUNK_SIZE = chatSettings.contextLength
@@ -184,14 +177,12 @@ export async function buildGoogleGeminiFinalMessages(
   profile: Tables<"profiles">,
   messageImageFiles: MessageImage[]
 ) {
-  const { chatSettings, workspaceInstructions, chatMessages, assistant } =
-    payload
+  const { chatSettings, workspaceInstructions, chatMessages } = payload
 
   const BUILT_PROMPT = buildBasePrompt(
     chatSettings.prompt,
     chatSettings.includeProfileContext ? profile.profile_context || "" : "",
-    chatSettings.includeWorkspaceInstructions ? workspaceInstructions : "",
-    assistant
+    chatSettings.includeWorkspaceInstructions ? workspaceInstructions : ""
   )
 
   let finalMessages = []

@@ -33,7 +33,6 @@ export const DeleteFolder: FC<DeleteFolderProps> = ({
     setPrompts,
     setFiles,
     setCollections,
-    setAssistants,
     setModels
   } = useContext(ChatbotUIContext)
 
@@ -47,7 +46,6 @@ export const DeleteFolder: FC<DeleteFolderProps> = ({
     prompts: setPrompts,
     files: setFiles,
     collections: setCollections,
-    assistants: setAssistants,
     models: setModels
   }
 

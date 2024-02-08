@@ -31,8 +31,6 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
     setSelectedChat,
     setChatSettings,
     setChatImages,
-    assistants,
-    setSelectedAssistant,
     setChatFileItems,
     setChatFiles,
     setShowFilesDisplay,
@@ -72,7 +70,8 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
     } else {
       setLoading(false)
     }
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Keep the dependency array empty to run only on mount
 
   const fetchMessages = async () => {
     const fetchedMessages = await getMessagesByChatId(params.chatid as string)
@@ -151,16 +150,6 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
   const fetchChat = async () => {
     const chat = await getChatById(params.chatid as string)
     if (!chat) return
-
-    if (chat.assistant_id) {
-      const assistant = assistants.find(
-        assistant => assistant.id === chat.assistant_id
-      )
-
-      if (assistant) {
-        setSelectedAssistant(assistant)
-      }
-    }
 
     setSelectedChat(chat)
     setChatSettings({

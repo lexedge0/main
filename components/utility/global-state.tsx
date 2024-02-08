@@ -23,7 +23,6 @@ import {
   OpenRouterLLM,
   WorkspaceImage
 } from "@/types"
-import { AssistantImage } from "@/types/images/assistant-image"
 import { VALID_ENV_KEYS } from "@/types/valid-keys"
 import { useRouter } from "next/navigation"
 import { FC, useEffect, useState, useMemo } from "react"
@@ -39,7 +38,6 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [profile, setProfile] = useState<Tables<"profiles"> | null>(null)
 
   // ITEMS STORE
-  const [assistants, setAssistants] = useState<Tables<"assistants">[]>([])
   const [collections, setCollections] = useState<Tables<"collections">[]>([])
   const [chats, setChats] = useState<Tables<"chats">[]>([])
   const [files, setFiles] = useState<Tables<"files">[]>([])
@@ -67,9 +65,6 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
     useState<Tables<"presets"> | null>(null)
 
   // ASSISTANT STORE
-  const [selectedAssistant, setSelectedAssistant] =
-    useState<Tables<"assistants"> | null>(null)
-  const [assistantImages, setAssistantImages] = useState<AssistantImage[]>([])
   const [openaiAssistants, setOpenaiAssistants] = useState<any[]>([])
 
   // PASSIVE CHAT STORE
@@ -195,8 +190,6 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         setProfile,
 
         // ITEMS STORE
-        assistants,
-        setAssistants,
         collections,
         setCollections,
         chats,
@@ -235,10 +228,6 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         setSelectedPreset,
 
         // ASSISTANT STORE
-        selectedAssistant,
-        setSelectedAssistant,
-        assistantImages,
-        setAssistantImages,
         openaiAssistants,
         setOpenaiAssistants,
 

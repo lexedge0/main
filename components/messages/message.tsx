@@ -55,9 +55,7 @@ export const Message: FC<MessageProps> = ({
     availableLocalModels,
     availableOpenRouterModels,
     chatMessages,
-    selectedAssistant,
     chatImages,
-    assistantImages,
     files,
     models
   } = useContext(ChatbotUIContext)
@@ -140,10 +138,6 @@ export const Message: FC<MessageProps> = ({
     ...availableOpenRouterModels
   ].find(llm => llm.modelId === message.model) as LLM
 
-  const selectedAssistantImage = assistantImages.find(
-    image => image.path === selectedAssistant?.image_path
-  )?.base64
-
   const modelDetails = LLM_LIST.find(model => model.modelId === message.model)
 
   return (
@@ -181,33 +175,16 @@ export const Message: FC<MessageProps> = ({
           ) : (
             <div className="flex items-center space-x-3">
               {message.role === "assistant" ? (
-                selectedAssistant ? (
-                  selectedAssistantImage ? (
-                    <Image
-                      className="rounded"
-                      src={selectedAssistantImage || ""}
-                      alt="assistant image"
+                <WithTooltip
+                  display={<div>{MODEL_DATA?.modelName}</div>}
+                  trigger={
+                    <ModelIcon
+                      provider={modelDetails?.provider || "custom"}
                       height={ICON_SIZE}
                       width={ICON_SIZE}
                     />
-                  ) : (
-                    <IconRobotFace
-                      className="bg-primary text-secondary border-primary rounded border-[1px] p-1"
-                      size={ICON_SIZE}
-                    />
-                  )
-                ) : (
-                  <WithTooltip
-                    display={<div>{MODEL_DATA?.modelName}</div>}
-                    trigger={
-                      <ModelIcon
-                        provider={modelDetails?.provider || "custom"}
-                        height={ICON_SIZE}
-                        width={ICON_SIZE}
-                      />
-                    }
-                  />
-                )
+                  }
+                />
               ) : profile?.image_url ? (
                 <Image
                   className={`size-[28px] rounded`}
@@ -225,9 +202,7 @@ export const Message: FC<MessageProps> = ({
 
               <div className="font-semibold">
                 {message.role === "assistant"
-                  ? selectedAssistant
-                    ? selectedAssistant?.name
-                    : MODEL_DATA?.modelName
+                  ? MODEL_DATA?.modelName
                   : profile?.display_name ?? profile?.username}
               </div>
             </div>

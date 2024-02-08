@@ -8,7 +8,6 @@ import {
   OpenRouterLLM,
   WorkspaceImage
 } from "@/types"
-import { AssistantImage } from "@/types/images/assistant-image"
 import { VALID_ENV_KEYS } from "@/types/valid-keys"
 import { Dispatch, SetStateAction, createContext } from "react"
 
@@ -18,8 +17,6 @@ interface ChatbotUIContext {
   setProfile: Dispatch<SetStateAction<Tables<"profiles"> | null>>
 
   // ITEMS STORE
-  assistants: Tables<"assistants">[]
-  setAssistants: Dispatch<SetStateAction<Tables<"assistants">[]>>
   collections: Tables<"collections">[]
   setCollections: Dispatch<SetStateAction<Tables<"collections">[]>>
   chats: Tables<"chats">[]
@@ -58,10 +55,6 @@ interface ChatbotUIContext {
   setSelectedPreset: Dispatch<SetStateAction<Tables<"presets"> | null>>
 
   // ASSISTANT STORE
-  selectedAssistant: Tables<"assistants"> | null
-  setSelectedAssistant: Dispatch<SetStateAction<Tables<"assistants"> | null>>
-  assistantImages: AssistantImage[]
-  setAssistantImages: Dispatch<SetStateAction<AssistantImage[]>>
   openaiAssistants: any[]
   setOpenaiAssistants: Dispatch<SetStateAction<any[]>>
 
@@ -124,8 +117,6 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   setProfile: () => {},
 
   // ITEMS STORE
-  assistants: [],
-  setAssistants: () => {},
   collections: [],
   setCollections: () => {},
   chats: [],
@@ -164,10 +155,6 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   setSelectedPreset: () => {},
 
   // ASSISTANT STORE
-  selectedAssistant: null,
-  setSelectedAssistant: () => {},
-  assistantImages: [],
-  setAssistantImages: () => {},
   openaiAssistants: [],
   setOpenaiAssistants: () => {},
 

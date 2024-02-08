@@ -29,11 +29,6 @@ export const FILE_DESCRIPTION_MAX = 500
 export const COLLECTION_NAME_MAX = 100
 export const COLLECTION_DESCRIPTION_MAX = 500
 
-// Assistant
-export const ASSISTANT_NAME_MAX = 100
-export const ASSISTANT_DESCRIPTION_MAX = 500
-export const ASSISTANT_PROMPT_MAX = 100000
-
 // Models
 export const MODEL_NAME_MAX = 100
 export const MODEL_DESCRIPTION_MAX = 500

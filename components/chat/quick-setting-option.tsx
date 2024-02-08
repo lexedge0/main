@@ -7,9 +7,9 @@ import { ModelIcon } from "../models/model-icon"
 import { DropdownMenuItem } from "../ui/dropdown-menu"
 
 interface QuickSettingOptionProps {
-  contentType: "presets" | "assistants"
+  contentType: "presets"
   isSelected: boolean
-  item: Tables<"presets"> | Tables<"assistants">
+  item: Tables<"presets">
   onSelect: () => void
   image: string
 }
@@ -33,15 +33,6 @@ export const QuickSettingOption: FC<QuickSettingOptionProps> = ({
         {contentType === "presets" ? (
           <ModelIcon
             provider={modelDetails?.provider || "custom"}
-            width={32}
-            height={32}
-          />
-        ) : image ? (
-          <Image
-            style={{ width: "32px", height: "32px" }}
-            className="rounded"
-            src={image}
-            alt="Assistant"
             width={32}
             height={32}
           />

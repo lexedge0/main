@@ -97,12 +97,8 @@ const AdvancedContent: FC<AdvancedContentProps> = ({
   onChangeChatSettings,
   showTooltip
 }) => {
-  const {
-    profile,
-    selectedWorkspace,
-    availableOpenRouterModels,
-    selectedAssistant
-  } = useContext(ChatbotUIContext)
+  const { profile, selectedWorkspace, availableOpenRouterModels } =
+    useContext(ChatbotUIContext)
 
   function findOpenRouterModel(modelId: string) {
     return availableOpenRouterModels.find(model => model.modelId === modelId)

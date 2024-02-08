@@ -21,7 +21,6 @@ export const ChatItem: FC<ChatItemProps> = ({ chat }) => {
     selectedWorkspace,
     selectedChat,
     availableLocalModels,
-    assistantImages,
     availableOpenRouterModels
   } = useContext(ChatbotUIContext)
 
@@ -49,10 +48,6 @@ export const ChatItem: FC<ChatItemProps> = ({ chat }) => {
     ...availableOpenRouterModels
   ].find(llm => llm.modelId === chat.model) as LLM
 
-  const assistantImage = assistantImages.find(
-    image => image.assistantId === chat.assistant_id
-  )?.base64
-
   return (
     <div
       ref={itemRef}
@@ -65,20 +60,10 @@ export const ChatItem: FC<ChatItemProps> = ({ chat }) => {
       onClick={handleClick}
     >
       {chat.assistant_id ? (
-        assistantImage ? (
-          <Image
-            className="rounded"
-            src={assistantImage}
-            alt="Assistant image"
-            width={30}
-            height={30}
-          />
-        ) : (
-          <IconRobotFace
-            className="bg-primary text-secondary border-primary rounded border-[1px] p-1"
-            size={30}
-          />
-        )
+        <IconRobotFace
+          className="bg-primary text-secondary border-primary rounded border-[1px] p-1"
+          size={30}
+        />
       ) : (
         <WithTooltip
           delayDuration={200}

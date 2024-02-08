@@ -1,5 +1,4 @@
 import { ChatbotUIContext } from "@/context/context"
-import { createAssistants } from "@/db/assistants"
 import { createChats } from "@/db/chats"
 import { createCollections } from "@/db/collections"
 import { createFiles } from "@/db/files"
@@ -30,8 +29,7 @@ export const Import: FC<ImportProps> = ({}) => {
     setPresets,
     setPrompts,
     setFiles,
-    setCollections,
-    setAssistants
+    setCollections
   } = useContext(ChatbotUIContext)
 
   const inputRef = useRef<HTMLInputElement>(null)
@@ -45,14 +43,12 @@ export const Import: FC<ImportProps> = ({}) => {
     prompts: number
     files: number
     collections: number
-    assistants: number
   }>({
     chats: 0,
     presets: 0,
     prompts: 0,
     files: 0,
-    collections: 0,
-    assistants: 0
+    collections: 0
   })
 
   const stateUpdateFunctions = {
@@ -60,8 +56,7 @@ export const Import: FC<ImportProps> = ({}) => {
     presets: setPresets,
     prompts: setPrompts,
     files: setFiles,
-    collections: setCollections,
-    assistants: setAssistants
+    collections: setCollections
   }
 
   const handleSelectFiles = async (e: any) => {
@@ -98,8 +93,7 @@ export const Import: FC<ImportProps> = ({}) => {
           "presets",
           "prompts",
           "files",
-          "collections",
-          "assistants"
+          "collections"
         ]
         const newCounts: any = { ...prevCounts }
         countTypes.forEach(type => {
@@ -131,8 +125,7 @@ export const Import: FC<ImportProps> = ({}) => {
       presets: 0,
       prompts: 0,
       files: 0,
-      collections: 0,
-      assistants: 0
+      collections: 0
     })
     setIsOpen(false)
   }
@@ -146,8 +139,7 @@ export const Import: FC<ImportProps> = ({}) => {
       presets: [],
       prompts: [],
       files: [],
-      collections: [],
-      assistants: []
+      collections: []
     }
 
     importList.forEach(item => {
@@ -164,10 +156,6 @@ export const Import: FC<ImportProps> = ({}) => {
       files: await createFiles(saveData.files, selectedWorkspace.id),
       collections: await createCollections(
         saveData.collections,
-        selectedWorkspace.id
-      ),
-      assistants: await createAssistants(
-        saveData.assistants,
         selectedWorkspace.id
       )
     }
@@ -188,8 +176,7 @@ export const Import: FC<ImportProps> = ({}) => {
       presets: 0,
       prompts: 0,
       files: 0,
-      collections: 0,
-      assistants: 0
+      collections: 0
     })
     setIsOpen(false)
   }
