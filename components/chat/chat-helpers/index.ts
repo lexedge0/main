@@ -150,8 +150,7 @@ export const handleLocalChat = async (
   newAbortController: AbortController,
   setIsGenerating: React.Dispatch<React.SetStateAction<boolean>>,
   setFirstTokenReceived: React.Dispatch<React.SetStateAction<boolean>>,
-  setChatMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>,
-  setToolInUse: React.Dispatch<React.SetStateAction<string>>
+  setChatMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>
 ) => {
   const formattedMessages = await buildFinalMessages(payload, profile, [])
 
@@ -179,8 +178,7 @@ export const handleLocalChat = async (
     false,
     newAbortController,
     setFirstTokenReceived,
-    setChatMessages,
-    setToolInUse
+    setChatMessages
   )
 }
 
@@ -195,8 +193,7 @@ export const handleHostedChat = async (
   chatImages: MessageImage[],
   setIsGenerating: React.Dispatch<React.SetStateAction<boolean>>,
   setFirstTokenReceived: React.Dispatch<React.SetStateAction<boolean>>,
-  setChatMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>,
-  setToolInUse: React.Dispatch<React.SetStateAction<string>>
+  setChatMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>
 ) => {
   const provider =
     modelData.provider === "openai" && profile.use_azure_openai
@@ -241,8 +238,7 @@ export const handleHostedChat = async (
     true,
     newAbortController,
     setFirstTokenReceived,
-    setChatMessages,
-    setToolInUse
+    setChatMessages
   )
 }
 
@@ -284,8 +280,7 @@ export const processResponse = async (
   isHosted: boolean,
   controller: AbortController,
   setFirstTokenReceived: React.Dispatch<React.SetStateAction<boolean>>,
-  setChatMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>,
-  setToolInUse: React.Dispatch<React.SetStateAction<string>>
+  setChatMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>
 ) => {
   let fullText = ""
   let contentToAdd = ""
@@ -295,7 +290,6 @@ export const processResponse = async (
       response.body,
       chunk => {
         setFirstTokenReceived(true)
-        setToolInUse("none")
 
         try {
           contentToAdd = isHosted

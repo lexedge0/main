@@ -38,16 +38,11 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     focusPrompt,
     setFocusPrompt,
     focusFile,
-    focusTool,
-    setFocusTool,
-    isToolPickerOpen,
     isPromptPickerOpen,
     setIsPromptPickerOpen,
     isAtPickerOpen,
     setFocusFile,
-    chatSettings,
-    selectedTools,
-    setSelectedTools
+    chatSettings
   } = useContext(ChatbotUIContext)
 
   const {
@@ -67,7 +62,7 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     setTimeout(() => {
       handleFocusChatInput()
     }, 200) // FIX: hacky
-  }, [selectedPreset, selectedAssistant])
+  }, [selectedPreset, selectedAssistant, handleFocusChatInput])
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (!isTyping && event.key === "Enter" && !event.shiftKey) {
@@ -95,16 +90,6 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
       event.preventDefault()
       setFocusFile(!focusFile)
     }
-
-    if (
-      isToolPickerOpen &&
-      (event.key === "Tab" ||
-        event.key === "ArrowUp" ||
-        event.key === "ArrowDown")
-    ) {
-      event.preventDefault()
-      setFocusTool(!focusTool)
-    }
   }
 
   const handlePaste = (event: React.ClipboardEvent) => {
@@ -126,29 +111,6 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
   return (
     <>
       <ChatFilesDisplay />
-
-      <div className="flex flex-wrap justify-center gap-2">
-        {selectedTools &&
-          selectedTools.map((tool, index) => (
-            <div
-              key={index}
-              className="mt-2 flex justify-center"
-              onClick={() =>
-                setSelectedTools(
-                  selectedTools.filter(
-                    selectedTool => selectedTool.id !== tool.id
-                  )
-                )
-              }
-            >
-              <div className="flex cursor-pointer items-center justify-center space-x-1 rounded-lg bg-purple-600 px-3 py-1 hover:opacity-50">
-                <IconBolt size={20} />
-
-                <div>{tool.name}</div>
-              </div>
-            </div>
-          ))}
-      </div>
 
       <div className="border-input relative mt-3 flex min-h-[60px] w-full items-center justify-center rounded-xl border-2">
         <div className="absolute bottom-[76px] left-0 max-h-[300px] w-full overflow-auto rounded-xl dark:border-none">
@@ -179,7 +141,7 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
           textareaRef={chatInputRef}
           className="ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring text-md flex w-full resize-none rounded-md border-none bg-transparent px-14 py-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
           placeholder={t(
-            `Ask anything. Type "/" for prompts, "#" for files, and "!" for tools.`
+            `Ask anything. Type "/" for prompts and "#" for files.`
           )}
           onValueChange={handleInputChange}
           value={userInput}

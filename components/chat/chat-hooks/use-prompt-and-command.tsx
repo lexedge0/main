@@ -14,19 +14,14 @@ export const usePromptAndCommand = () => {
     setIsAtPickerOpen,
     setSlashCommand,
     setAtCommand,
-    setUseRetrieval,
-    setToolCommand,
-    setIsToolPickerOpen,
-    setSelectedTools
+    setUseRetrieval
   } = useContext(ChatbotUIContext)
 
   const handleInputChange = (value: string) => {
     const slashTextRegex = /\/([^ ]*)$/
     const atTextRegex = /#([^ ]*)$/
-    const toolTextRegex = /!([^ ]*)$/
     const slashMatch = value.match(slashTextRegex)
     const atMatch = value.match(atTextRegex)
-    const toolMatch = value.match(toolTextRegex)
 
     if (slashMatch) {
       setIsPromptPickerOpen(true)
@@ -34,16 +29,11 @@ export const usePromptAndCommand = () => {
     } else if (atMatch) {
       setIsAtPickerOpen(true)
       setAtCommand(atMatch[1])
-    } else if (toolMatch) {
-      setIsToolPickerOpen(true)
-      setToolCommand(toolMatch[1])
     } else {
       setIsPromptPickerOpen(false)
       setIsAtPickerOpen(false)
       setSlashCommand("")
       setAtCommand("")
-      setIsToolPickerOpen(false)
-      setToolCommand("")
     }
 
     setUserInput(value)
@@ -112,17 +102,10 @@ export const usePromptAndCommand = () => {
     setUserInput(userInput.replace(/#[^ ]*$/, ""))
   }
 
-  const handleSelectTool = (tool: Tables<"tools">) => {
-    setIsToolPickerOpen(false)
-    setUserInput(userInput.replace(/![^ ]*$/, ""))
-    setSelectedTools(prev => [...prev, tool])
-  }
-
   return {
     handleInputChange,
     handleSelectPrompt,
     handleSelectUserFile,
-    handleSelectUserCollection,
-    handleSelectTool
+    handleSelectUserCollection
   }
 }

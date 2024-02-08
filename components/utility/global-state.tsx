@@ -26,7 +26,7 @@ import {
 import { AssistantImage } from "@/types/images/assistant-image"
 import { VALID_ENV_KEYS } from "@/types/valid-keys"
 import { useRouter } from "next/navigation"
-import { FC, useEffect, useState } from "react"
+import { FC, useEffect, useState, useMemo } from "react"
 
 interface GlobalStateProps {
   children: React.ReactNode
@@ -47,7 +47,6 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [models, setModels] = useState<Tables<"models">[]>([])
   const [presets, setPresets] = useState<Tables<"presets">[]>([])
   const [prompts, setPrompts] = useState<Tables<"prompts">[]>([])
-  const [tools, setTools] = useState<Tables<"tools">[]>([])
   const [workspaces, setWorkspaces] = useState<Tables<"workspaces">[]>([])
 
   // MODELS STORE
@@ -99,11 +98,8 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [slashCommand, setSlashCommand] = useState("")
   const [isAtPickerOpen, setIsAtPickerOpen] = useState(false)
   const [atCommand, setAtCommand] = useState("")
-  const [isToolPickerOpen, setIsToolPickerOpen] = useState(false)
-  const [toolCommand, setToolCommand] = useState("")
   const [focusPrompt, setFocusPrompt] = useState(false)
   const [focusFile, setFocusFile] = useState(false)
-  const [focusTool, setFocusTool] = useState(false)
 
   // ATTACHMENTS STORE
   const [chatFiles, setChatFiles] = useState<ChatFile[]>([])
@@ -116,11 +112,53 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [useRetrieval, setUseRetrieval] = useState<boolean>(true)
   const [sourceCount, setSourceCount] = useState<number>(4)
 
-  // TOOL STORE
-  const [selectedTools, setSelectedTools] = useState<Tables<"tools">[]>([])
-  const [toolInUse, setToolInUse] = useState<string>("none")
-
   useEffect(() => {
+    // Define fetchStartingData as a standalone function
+    const fetchStartingData = async () => {
+      const session = (await supabase.auth.getSession()).data.session
+
+      if (session) {
+        const user = session.user
+
+        const profile = await getProfileByUserId(user.id)
+        setProfile(profile)
+
+        if (!profile.has_onboarded) {
+          return router.push("/setup")
+        }
+
+        const workspaces = await getWorkspacesByUserId(user.id)
+        setWorkspaces(workspaces)
+
+        for (const workspace of workspaces) {
+          let workspaceImageUrl = ""
+
+          if (workspace.image_path) {
+            workspaceImageUrl =
+              (await getWorkspaceImageFromStorage(workspace.image_path)) || ""
+          }
+
+          if (workspaceImageUrl) {
+            const response = await fetch(workspaceImageUrl)
+            const blob = await response.blob()
+            const base64 = await convertBlobToBase64(blob)
+
+            setWorkspaceImages(prev => [
+              ...prev,
+              {
+                workspaceId: workspace.id,
+                path: workspace.image_path,
+                base64: base64,
+                url: workspaceImageUrl
+              }
+            ])
+          }
+        }
+
+        return profile
+      }
+    }
+
     ;(async () => {
       const profile = await fetchStartingData()
 
@@ -147,52 +185,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         setAvailableLocalModels(localModels)
       }
     })()
-  }, [])
-
-  const fetchStartingData = async () => {
-    const session = (await supabase.auth.getSession()).data.session
-
-    if (session) {
-      const user = session.user
-
-      const profile = await getProfileByUserId(user.id)
-      setProfile(profile)
-
-      if (!profile.has_onboarded) {
-        return router.push("/setup")
-      }
-
-      const workspaces = await getWorkspacesByUserId(user.id)
-      setWorkspaces(workspaces)
-
-      for (const workspace of workspaces) {
-        let workspaceImageUrl = ""
-
-        if (workspace.image_path) {
-          workspaceImageUrl =
-            (await getWorkspaceImageFromStorage(workspace.image_path)) || ""
-        }
-
-        if (workspaceImageUrl) {
-          const response = await fetch(workspaceImageUrl)
-          const blob = await response.blob()
-          const base64 = await convertBlobToBase64(blob)
-
-          setWorkspaceImages(prev => [
-            ...prev,
-            {
-              workspaceId: workspace.id,
-              path: workspace.image_path,
-              base64: base64,
-              url: workspaceImageUrl
-            }
-          ])
-        }
-      }
-
-      return profile
-    }
-  }
+  }, [router]) // Removed fetchStartingData from the dependency array
 
   return (
     <ChatbotUIContext.Provider
@@ -218,8 +211,6 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         setPresets,
         prompts,
         setPrompts,
-        tools,
-        setTools,
         workspaces,
         setWorkspaces,
 
@@ -280,16 +271,10 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         setIsAtPickerOpen,
         atCommand,
         setAtCommand,
-        isToolPickerOpen,
-        setIsToolPickerOpen,
-        toolCommand,
-        setToolCommand,
         focusPrompt,
         setFocusPrompt,
         focusFile,
         setFocusFile,
-        focusTool,
-        setFocusTool,
 
         // ATTACHMENT STORE
         chatFiles,
@@ -307,13 +292,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         useRetrieval,
         setUseRetrieval,
         sourceCount,
-        setSourceCount,
-
-        // TOOL STORE
-        selectedTools,
-        setSelectedTools,
-        toolInUse,
-        setToolInUse
+        setSourceCount
       }}
     >
       {children}

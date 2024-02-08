@@ -11,7 +11,6 @@ import { FC, useContext, useEffect, useState } from "react"
 import profile from "react-syntax-highlighter/dist/esm/languages/hljs/profile"
 import { SidebarItem } from "../all/sidebar-display-item"
 import { AssistantRetrievalSelect } from "./assistant-retrieval-select"
-import { AssistantToolSelect } from "./assistant-tool-select"
 
 interface AssistantItemProps {
   assistant: Tables<"assistants">
@@ -81,25 +80,6 @@ export const AssistantItem: FC<AssistantItemProps> = ({ assistant }) => {
     })
   }
 
-  const handleToolSelect = (
-    tool: Tables<"tools">,
-    setSelectedAssistantTools: React.Dispatch<
-      React.SetStateAction<Tables<"tools">[]>
-    >
-  ) => {
-    setSelectedAssistantTools(prevState => {
-      const isToolAlreadySelected = prevState.find(
-        selectedTool => selectedTool.id === tool.id
-      )
-
-      if (isToolAlreadySelected) {
-        return prevState.filter(selectedTool => selectedTool.id !== tool.id)
-      } else {
-        return [...prevState, tool]
-      }
-    })
-  }
-
   if (!profile) return null
   if (!selectedWorkspace) return null
 
@@ -155,14 +135,6 @@ export const AssistantItem: FC<AssistantItemProps> = ({ assistant }) => {
         selectedAssistantCollections: Tables<"collections">[]
         setSelectedAssistantCollections: React.Dispatch<
           React.SetStateAction<Tables<"collections">[]>
-        >
-        startingAssistantTools: Tables<"tools">[]
-        setStartingAssistantTools: React.Dispatch<
-          React.SetStateAction<Tables<"tools">[]>
-        >
-        selectedAssistantTools: Tables<"tools">[]
-        setSelectedAssistantTools: React.Dispatch<
-          React.SetStateAction<Tables<"tools">[]>
         >
       }) => (
         <>
@@ -265,34 +237,6 @@ export const AssistantItem: FC<AssistantItemProps> = ({ assistant }) => {
                       item,
                       renderState.setSelectedAssistantCollections
                     )
-              }
-            />
-          </div>
-
-          <div className="space-y-1">
-            <Label>Tools</Label>
-
-            <AssistantToolSelect
-              selectedAssistantTools={
-                renderState.selectedAssistantTools.length === 0
-                  ? renderState.startingAssistantTools
-                  : [
-                      ...renderState.startingAssistantTools.filter(
-                        startingTool =>
-                          !renderState.selectedAssistantTools.some(
-                            selectedTool => selectedTool.id === startingTool.id
-                          )
-                      ),
-                      ...renderState.selectedAssistantTools.filter(
-                        selectedTool =>
-                          !renderState.startingAssistantTools.some(
-                            startingTool => startingTool.id === selectedTool.id
-                          )
-                      )
-                    ]
-              }
-              onAssistantToolsSelect={tool =>
-                handleToolSelect(tool, renderState.setSelectedAssistantTools)
               }
             />
           </div>

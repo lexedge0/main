@@ -34,7 +34,6 @@ export const useChatHandler = () => {
     selectedWorkspace,
     setSelectedChat,
     setChats,
-    setSelectedTools,
     availableLocalModels,
     availableOpenRouterModels,
     abortController,
@@ -51,27 +50,24 @@ export const useChatHandler = () => {
     newMessageFiles,
     chatFileItems,
     setChatFileItems,
-    setToolInUse,
     useRetrieval,
     sourceCount,
     setIsPromptPickerOpen,
     setIsAtPickerOpen,
-    selectedTools,
     selectedPreset,
     setChatSettings,
     models,
     isPromptPickerOpen,
-    isAtPickerOpen,
-    isToolPickerOpen
+    isAtPickerOpen
   } = useContext(ChatbotUIContext)
 
   const chatInputRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
-    if (!isPromptPickerOpen || !isAtPickerOpen || !isToolPickerOpen) {
+    if (!isPromptPickerOpen || !isAtPickerOpen) {
       chatInputRef.current?.focus()
     }
-  }, [isPromptPickerOpen, isAtPickerOpen, isToolPickerOpen])
+  }, [isPromptPickerOpen, isAtPickerOpen])
 
   const handleNewChat = async () => {
     if (!selectedWorkspace) return
@@ -91,9 +87,6 @@ export const useChatHandler = () => {
     setShowFilesDisplay(false)
     setIsPromptPickerOpen(false)
     setIsAtPickerOpen(false)
-
-    setSelectedTools([])
-    setToolInUse("none")
 
     if (selectedAssistant) {
       setChatSettings({
@@ -202,8 +195,6 @@ export const useChatHandler = () => {
         (newMessageFiles.length > 0 || chatFiles.length > 0) &&
         useRetrieval
       ) {
-        setToolInUse("retrieval")
-
         retrievedFileItems = await handleRetrieval(
           userInput,
           newMessageFiles,
@@ -236,70 +227,32 @@ export const useChatHandler = () => {
 
       let generatedText = ""
 
-      if (selectedTools.length > 0) {
-        setToolInUse(selectedTools.length > 1 ? "Tools" : selectedTools[0].name)
-
-        const formattedMessages = await buildFinalMessages(
+      if (modelData!.provider === "ollama") {
+        generatedText = await handleLocalChat(
           payload,
           profile!,
-          chatImages
-        )
-
-        const response = await fetch("/api/chat/tools", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            chatSettings: payload.chatSettings,
-            messages: formattedMessages,
-            selectedTools
-          })
-        })
-
-        setToolInUse("none")
-
-        generatedText = await processResponse(
-          response,
-          isRegeneration
-            ? payload.chatMessages[payload.chatMessages.length - 1]
-            : tempAssistantChatMessage,
-          true,
+          chatSettings!,
+          tempAssistantChatMessage,
+          isRegeneration,
           newAbortController,
+          setIsGenerating,
           setFirstTokenReceived,
-          setChatMessages,
-          setToolInUse
+          setChatMessages
         )
       } else {
-        if (modelData!.provider === "ollama") {
-          generatedText = await handleLocalChat(
-            payload,
-            profile!,
-            chatSettings!,
-            tempAssistantChatMessage,
-            isRegeneration,
-            newAbortController,
-            setIsGenerating,
-            setFirstTokenReceived,
-            setChatMessages,
-            setToolInUse
-          )
-        } else {
-          generatedText = await handleHostedChat(
-            payload,
-            profile!,
-            modelData!,
-            tempAssistantChatMessage,
-            isRegeneration,
-            newAbortController,
-            newMessageImages,
-            chatImages,
-            setIsGenerating,
-            setFirstTokenReceived,
-            setChatMessages,
-            setToolInUse
-          )
-        }
+        generatedText = await handleHostedChat(
+          payload,
+          profile!,
+          modelData!,
+          tempAssistantChatMessage,
+          isRegeneration,
+          newAbortController,
+          newMessageImages,
+          chatImages,
+          setIsGenerating,
+          setFirstTokenReceived,
+          setChatMessages
+        )
       }
 
       if (!currentChat) {

@@ -58,7 +58,6 @@ export const Message: FC<MessageProps> = ({
     selectedAssistant,
     chatImages,
     assistantImages,
-    toolInUse,
     files,
     models
   } = useContext(ChatbotUIContext)
@@ -125,7 +124,7 @@ export const Message: FC<MessageProps> = ({
       input.focus()
       input.setSelectionRange(input.value.length, input.value.length)
     }
-  }, [isEditing])
+  }, [isEditing, message.content])
 
   const MODEL_DATA = [
     ...models.map(model => ({
@@ -236,34 +235,8 @@ export const Message: FC<MessageProps> = ({
           {!firstTokenReceived &&
           isGenerating &&
           isLast &&
-          message.role === "assistant" ? (
-            <>
-              {(() => {
-                switch (toolInUse) {
-                  case "none":
-                    return (
-                      <IconCircleFilled className="animate-pulse" size={20} />
-                    )
-                  case "retrieval":
-                    return (
-                      <div className="flex animate-pulse items-center space-x-2">
-                        <IconFileText size={20} />
-
-                        <div>Searching files...</div>
-                      </div>
-                    )
-                  default:
-                    return (
-                      <div className="flex animate-pulse items-center space-x-2">
-                        <IconBolt size={20} />
-
-                        <div>Using {toolInUse}...</div>
-                      </div>
-                    )
-                }
-              })()}
-            </>
-          ) : isEditing ? (
+          message.role === "assistant" &&
+          isEditing ? (
             <TextareaAutosize
               textareaRef={editInputRef}
               className="text-md"

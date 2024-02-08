@@ -8,7 +8,6 @@ import { ASSISTANT_DESCRIPTION_MAX, ASSISTANT_NAME_MAX } from "@/db/limits"
 import { Tables, TablesInsert } from "@/supabase/types"
 import { FC, useContext, useEffect, useState } from "react"
 import { AssistantRetrievalSelect } from "./assistant-retrieval-select"
-import { AssistantToolSelect } from "./assistant-tool-select"
 
 interface CreateAssistantProps {
   isOpen: boolean
@@ -37,9 +36,6 @@ export const CreateAssistant: FC<CreateAssistantProps> = ({
   const [imageLink, setImageLink] = useState("")
   const [selectedAssistantRetrievalItems, setSelectedAssistantRetrievalItems] =
     useState<Tables<"files">[] | Tables<"collections">[]>([])
-  const [selectedAssistantToolItems, setSelectedAssistantToolItems] = useState<
-    Tables<"tools">[]
-  >([])
 
   useEffect(() => {
     setAssistantChatSettings(prevSettings => {
@@ -71,35 +67,6 @@ export const CreateAssistant: FC<CreateAssistantProps> = ({
     })
   }
 
-  const handleToolSelect = (item: Tables<"tools">) => {
-    setSelectedAssistantToolItems(prevState => {
-      const isItemAlreadySelected = prevState.find(
-        selectedItem => selectedItem.id === item.id
-      )
-
-      if (isItemAlreadySelected) {
-        return prevState.filter(selectedItem => selectedItem.id !== item.id)
-      } else {
-        return [...prevState, item]
-      }
-    })
-  }
-
-  const checkIfModelIsToolCompatible = () => {
-    if (!assistantChatSettings.model) return false
-
-    const compatibleModels = [
-      "gpt-4-1106-preview",
-      "gpt-4-vision-preview",
-      "gpt-3.5-turbo-1106"
-    ]
-    const isModelCompatible = compatibleModels.includes(
-      assistantChatSettings.model
-    )
-
-    return isModelCompatible
-  }
-
   if (!profile) return null
   if (!selectedWorkspace) return null
 
@@ -126,8 +93,7 @@ export const CreateAssistant: FC<CreateAssistantProps> = ({
           ) as Tables<"files">[],
           collections: selectedAssistantRetrievalItems.filter(
             item => !item.hasOwnProperty("type")
-          ) as Tables<"collections">[],
-          tools: selectedAssistantToolItems
+          ) as Tables<"collections">[]
         } as TablesInsert<"assistants">
       }
       isOpen={isOpen}
@@ -187,21 +153,6 @@ export const CreateAssistant: FC<CreateAssistantProps> = ({
               onAssistantRetrievalItemsSelect={handleRetrievalItemSelect}
             />
           </div>
-
-          {checkIfModelIsToolCompatible() ? (
-            <div className="space-y-1">
-              <Label>Tools</Label>
-
-              <AssistantToolSelect
-                selectedAssistantTools={selectedAssistantToolItems}
-                onAssistantToolsSelect={handleToolSelect}
-              />
-            </div>
-          ) : (
-            <div className="pt-1 font-semibold">
-              Model is not compatible with tools.
-            </div>
-          )}
         </>
       )}
       onOpenChange={onOpenChange}

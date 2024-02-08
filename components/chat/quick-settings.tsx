@@ -1,7 +1,6 @@
 import { ChatbotUIContext } from "@/context/context"
 import { getAssistantCollectionsByAssistantId } from "@/db/assistant-collections"
 import { getAssistantFilesByAssistantId } from "@/db/assistant-files"
-import { getAssistantToolsByAssistantId } from "@/db/assistant-tools"
 import { getCollectionFilesByCollectionId } from "@/db/collection-files"
 import useHotkey from "@/lib/hooks/use-hotkey"
 import { LLM_LIST } from "@/lib/models/llm/llm-list"
@@ -39,7 +38,6 @@ export const QuickSettings: FC<QuickSettingsProps> = ({}) => {
     setChatSettings,
     assistantImages,
     setChatFiles,
-    setSelectedTools,
     setShowFilesDisplay
   } = useContext(ChatbotUIContext)
 
@@ -80,10 +78,6 @@ export const QuickSettings: FC<QuickSettingsProps> = ({}) => {
         ).files
         allFiles = [...allFiles, ...collectionFiles]
       }
-      const assistantTools = (await getAssistantToolsByAssistantId(item.id))
-        .tools
-
-      setSelectedTools(assistantTools)
       setChatFiles(
         allFiles.map(file => ({
           id: file.id,

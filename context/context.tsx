@@ -34,8 +34,6 @@ interface ChatbotUIContext {
   setPresets: Dispatch<SetStateAction<Tables<"presets">[]>>
   prompts: Tables<"prompts">[]
   setPrompts: Dispatch<SetStateAction<Tables<"prompts">[]>>
-  tools: Tables<"tools">[]
-  setTools: Dispatch<SetStateAction<Tables<"tools">[]>>
   workspaces: Tables<"workspaces">[]
   setWorkspaces: Dispatch<SetStateAction<Tables<"workspaces">[]>>
 
@@ -96,16 +94,10 @@ interface ChatbotUIContext {
   setIsAtPickerOpen: Dispatch<SetStateAction<boolean>>
   atCommand: string
   setAtCommand: Dispatch<SetStateAction<string>>
-  isToolPickerOpen: boolean
-  setIsToolPickerOpen: Dispatch<SetStateAction<boolean>>
-  toolCommand: string
-  setToolCommand: Dispatch<SetStateAction<string>>
   focusPrompt: boolean
   setFocusPrompt: Dispatch<SetStateAction<boolean>>
   focusFile: boolean
   setFocusFile: Dispatch<SetStateAction<boolean>>
-  focusTool: boolean
-  setFocusTool: Dispatch<SetStateAction<boolean>>
 
   // ATTACHMENTS STORE
   chatFiles: ChatFile[]
@@ -124,12 +116,6 @@ interface ChatbotUIContext {
   setUseRetrieval: Dispatch<SetStateAction<boolean>>
   sourceCount: number
   setSourceCount: Dispatch<SetStateAction<number>>
-
-  // TOOL STORE
-  selectedTools: Tables<"tools">[]
-  setSelectedTools: Dispatch<SetStateAction<Tables<"tools">[]>>
-  toolInUse: string
-  setToolInUse: Dispatch<SetStateAction<string>>
 }
 
 export const ChatbotUIContext = createContext<ChatbotUIContext>({
@@ -154,8 +140,6 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   setPresets: () => {},
   prompts: [],
   setPrompts: () => {},
-  tools: [],
-  setTools: () => {},
   workspaces: [],
   setWorkspaces: () => {},
 
@@ -216,16 +200,10 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   setIsAtPickerOpen: () => {},
   atCommand: "",
   setAtCommand: () => {},
-  isToolPickerOpen: false,
-  setIsToolPickerOpen: () => {},
-  toolCommand: "",
-  setToolCommand: () => {},
   focusPrompt: false,
   setFocusPrompt: () => {},
   focusFile: false,
   setFocusFile: () => {},
-  focusTool: false,
-  setFocusTool: () => {},
 
   // ATTACHMENTS STORE
   chatFiles: [],
@@ -243,11 +221,5 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   useRetrieval: false,
   setUseRetrieval: () => {},
   sourceCount: 4,
-  setSourceCount: () => {},
-
-  // TOOL STORE
-  selectedTools: [],
-  setSelectedTools: () => {},
-  toolInUse: "none",
-  setToolInUse: () => {}
+  setSourceCount: () => {}
 })
