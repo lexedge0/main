@@ -34,11 +34,8 @@ export const SidebarItem: FC<SidebarItemProps> = ({
 
   const actionMap = {
     chats: async (item: any) => {},
-    presets: async (item: any) => {},
-    prompts: async (item: any) => {},
     files: async (item: any) => {},
-    collections: async (item: any) => {},
-    models: async (item: any) => {}
+    collections: async (item: any) => {}
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

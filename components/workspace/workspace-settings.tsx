@@ -56,14 +56,15 @@ export const WorkspaceSettings: FC<WorkspaceSettingsProps> = ({}) => {
   )
 
   const [defaultChatSettings, setDefaultChatSettings] = useState({
-    model: selectedWorkspace?.default_model,
-    prompt: selectedWorkspace?.default_prompt,
-    temperature: selectedWorkspace?.default_temperature,
-    contextLength: selectedWorkspace?.default_context_length,
-    includeProfileContext: selectedWorkspace?.include_profile_context,
+    model: (process.env.LLM_TO_USE as LLMID) || ("claude-2.1" as LLMID),
+    prompt: process.env.SYSTEM_PROMPT || "You are a helpful AI assistant.",
+    temperature: parseFloat(process.env.DEFAULT_TEMPERATURE || "0.7"),
+    contextLength: parseInt(process.env.DEFAULT_CONTEXT_LENGTH || "2048", 10),
+    includeProfileContext: process.env.INCLUDE_PROFILE_CONTEXT === "true",
     includeWorkspaceInstructions:
-      selectedWorkspace?.include_workspace_instructions,
-    embeddingsProvider: selectedWorkspace?.embeddings_provider
+      process.env.INCLUDE_WORKSPACE_INSTRUCTIONS === "true",
+    embeddingsProvider:
+      (process.env.EMBEDDINGS_PROVIDER as "openai" | "local") || "openai"
   })
 
   useEffect(() => {
@@ -73,6 +74,7 @@ export const WorkspaceSettings: FC<WorkspaceSettingsProps> = ({}) => {
       )?.base64 || ""
 
     setImageLink(workspaceImage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceImages])
 
   const handleSave = async () => {
@@ -199,11 +201,6 @@ export const WorkspaceSettings: FC<WorkspaceSettingsProps> = ({}) => {
           </SheetHeader>
 
           <Tabs defaultValue="main">
-            <TabsList className="mt-4 grid w-full grid-cols-2">
-              <TabsTrigger value="main">Main</TabsTrigger>
-              <TabsTrigger value="defaults">Defaults</TabsTrigger>
-            </TabsList>
-
             <TabsContent className="mt-4 space-y-4" value="main">
               <>
                 <div className="space-y-1">
@@ -258,17 +255,6 @@ export const WorkspaceSettings: FC<WorkspaceSettingsProps> = ({}) => {
                   limit={WORKSPACE_INSTRUCTIONS_MAX}
                 />
               </div>
-            </TabsContent>
-
-            <TabsContent className="mt-5" value="defaults">
-              <div className="mb-4 text-sm">
-                These are the settings your workspace begins with when selected.
-              </div>
-
-              <ChatSettingsForm
-                chatSettings={defaultChatSettings as any}
-                onChangeChatSettings={setDefaultChatSettings}
-              />
             </TabsContent>
           </Tabs>
         </div>

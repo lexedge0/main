@@ -12,9 +12,6 @@ import { ChatbotUIContext } from "@/context/context"
 import { deleteChat } from "@/db/chats"
 import { deleteCollection } from "@/db/collections"
 import { deleteFile } from "@/db/files"
-import { deleteModel } from "@/db/models"
-import { deletePreset } from "@/db/presets"
-import { deletePrompt } from "@/db/prompts"
 import { deleteFileFromStorage } from "@/db/storage/files"
 import { Tables } from "@/supabase/types"
 import { ContentType, DataItemType } from "@/types"
@@ -29,14 +26,7 @@ export const SidebarDeleteItem: FC<SidebarDeleteItemProps> = ({
   item,
   contentType
 }) => {
-  const {
-    setChats,
-    setPresets,
-    setPrompts,
-    setFiles,
-    setCollections,
-    setModels
-  } = useContext(ChatbotUIContext)
+  const { setChats, setFiles, setCollections } = useContext(ChatbotUIContext)
 
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -46,31 +36,19 @@ export const SidebarDeleteItem: FC<SidebarDeleteItemProps> = ({
     chats: async (chat: Tables<"chats">) => {
       await deleteChat(chat.id)
     },
-    presets: async (preset: Tables<"presets">) => {
-      await deletePreset(preset.id)
-    },
-    prompts: async (prompt: Tables<"prompts">) => {
-      await deletePrompt(prompt.id)
-    },
     files: async (file: Tables<"files">) => {
       await deleteFileFromStorage(file.file_path)
       await deleteFile(file.id)
     },
     collections: async (collection: Tables<"collections">) => {
       await deleteCollection(collection.id)
-    },
-    models: async (model: Tables<"models">) => {
-      await deleteModel(model.id)
     }
   }
 
   const stateUpdateFunctions = {
     chats: setChats,
-    presets: setPresets,
-    prompts: setPrompts,
     files: setFiles,
-    collections: setCollections,
-    models: setModels
+    collections: setCollections
   }
 
   const handleDelete = async () => {

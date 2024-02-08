@@ -6,9 +6,6 @@ import { getChatsByWorkspaceId } from "@/db/chats"
 import { getCollectionWorkspacesByWorkspaceId } from "@/db/collections"
 import { getFileWorkspacesByWorkspaceId } from "@/db/files"
 import { getFoldersByWorkspaceId } from "@/db/folders"
-import { getModelWorkspacesByWorkspaceId } from "@/db/models"
-import { getPresetWorkspacesByWorkspaceId } from "@/db/presets"
-import { getPromptWorkspacesByWorkspaceId } from "@/db/prompts"
 import { getWorkspaceById } from "@/db/workspaces"
 import { convertBlobToBase64 } from "@/lib/blob-to-b64"
 import { supabase } from "@/lib/supabase/browser-client"
@@ -33,9 +30,6 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
     setCollections,
     setFolders,
     setFiles,
-    setPresets,
-    setPrompts,
-    setModels,
     selectedWorkspace,
     setSelectedWorkspace,
     setSelectedChat,
@@ -71,28 +65,21 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
 
       const fileData = await getFileWorkspacesByWorkspaceId(workspaceId)
       setFiles(fileData.files)
-
-      const presetData = await getPresetWorkspacesByWorkspaceId(workspaceId)
-      setPresets(presetData.presets)
-
-      const promptData = await getPromptWorkspacesByWorkspaceId(workspaceId)
-      setPrompts(promptData.prompts)
-
-      const modelData = await getModelWorkspacesByWorkspaceId(workspaceId)
-      setModels(modelData.models)
-
       setChatSettings({
-        model: (workspace?.default_model || "gpt-4-1106-preview") as LLMID,
+        model: (process.env.LLM_TO_USE || "claude-2.1") as LLMID,
         prompt:
-          workspace?.default_prompt ||
+          process.env.SYSTEM_PROMPT ||
           "You are a friendly, helpful AI assistant.",
-        temperature: workspace?.default_temperature || 0.5,
-        contextLength: workspace?.default_context_length || 4096,
-        includeProfileContext: workspace?.include_profile_context || true,
+        temperature: parseFloat(process.env.DEFAULT_TEMPERATURE || "0.5"),
+        contextLength: parseInt(
+          process.env.DEFAULT_CONTEXT_LENGTH || "4096",
+          10
+        ),
+        includeProfileContext: process.env.INCLUDE_PROFILE_CONTEXT === "true",
         includeWorkspaceInstructions:
-          workspace?.include_workspace_instructions || true,
+          process.env.INCLUDE_WORKSPACE_INSTRUCTIONS === "true",
         embeddingsProvider:
-          (workspace?.embeddings_provider as "openai" | "local") || "openai"
+          (process.env.EMBEDDINGS_PROVIDER as "openai" | "local") || "openai"
       })
 
       setLoading(false)
@@ -103,9 +90,6 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
       setCollections,
       setFiles,
       setFolders,
-      setModels,
-      setPresets,
-      setPrompts,
       setSelectedWorkspace
     ]
   )

@@ -52,12 +52,9 @@ export const Message: FC<MessageProps> = ({
     isGenerating,
     setIsGenerating,
     firstTokenReceived,
-    availableLocalModels,
-    availableOpenRouterModels,
     chatMessages,
     chatImages,
-    files,
-    models
+    files
   } = useContext(ChatbotUIContext)
 
   const { handleSendMessage } = useChatHandler()
@@ -124,19 +121,9 @@ export const Message: FC<MessageProps> = ({
     }
   }, [isEditing, message.content])
 
-  const MODEL_DATA = [
-    ...models.map(model => ({
-      modelId: model.model_id as LLMID,
-      modelName: model.name,
-      provider: "custom" as ModelProvider,
-      hostedId: model.id,
-      platformLink: "",
-      imageInput: false
-    })),
-    ...LLM_LIST,
-    ...availableLocalModels,
-    ...availableOpenRouterModels
-  ].find(llm => llm.modelId === message.model) as LLM
+  const MODEL_DATA = [...LLM_LIST].find(
+    llm => llm.modelId === message.model
+  ) as LLM
 
   const modelDetails = LLM_LIST.find(model => model.modelId === message.model)
 

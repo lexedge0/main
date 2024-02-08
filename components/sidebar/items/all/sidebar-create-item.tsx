@@ -11,9 +11,6 @@ import { createChat } from "@/db/chats"
 import { createCollectionFiles } from "@/db/collection-files"
 import { createCollection } from "@/db/collections"
 import { createFileBasedOnExtension } from "@/db/files"
-import { createModel } from "@/db/models"
-import { createPreset } from "@/db/presets"
-import { createPrompt } from "@/db/prompts"
 import { convertBlobToBase64 } from "@/lib/blob-to-b64"
 import { Tables, TablesInsert } from "@/supabase/types"
 import { ContentType } from "@/types"
@@ -37,15 +34,8 @@ export const SidebarCreateItem: FC<SidebarCreateItemProps> = ({
   createState,
   isTyping
 }) => {
-  const {
-    selectedWorkspace,
-    setChats,
-    setPresets,
-    setPrompts,
-    setFiles,
-    setCollections,
-    setModels
-  } = useContext(ChatbotUIContext)
+  const { selectedWorkspace, setChats, setFiles, setCollections } =
+    useContext(ChatbotUIContext)
 
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -53,8 +43,6 @@ export const SidebarCreateItem: FC<SidebarCreateItemProps> = ({
 
   const createFunctions = {
     chats: createChat,
-    presets: createPreset,
-    prompts: createPrompt,
     files: async (
       createState: { file: File } & TablesInsert<"files">,
       workspaceId: string
@@ -91,17 +79,13 @@ export const SidebarCreateItem: FC<SidebarCreateItemProps> = ({
       await createCollectionFiles(finalCollectionFiles)
 
       return createdCollection
-    },
-    models: createModel
+    }
   }
 
   const stateUpdateFunctions = {
     chats: setChats,
-    presets: setPresets,
-    prompts: setPrompts,
     files: setFiles,
-    collections: setCollections,
-    models: setModels
+    collections: setCollections
   }
 
   const handleCreate = async () => {

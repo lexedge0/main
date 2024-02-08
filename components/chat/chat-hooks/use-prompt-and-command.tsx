@@ -10,7 +10,6 @@ export const usePromptAndCommand = () => {
     userInput,
     setUserInput,
     setShowFilesDisplay,
-    setIsPromptPickerOpen,
     setIsAtPickerOpen,
     setSlashCommand,
     setAtCommand,
@@ -18,30 +17,18 @@ export const usePromptAndCommand = () => {
   } = useContext(ChatbotUIContext)
 
   const handleInputChange = (value: string) => {
-    const slashTextRegex = /\/([^ ]*)$/
     const atTextRegex = /#([^ ]*)$/
-    const slashMatch = value.match(slashTextRegex)
     const atMatch = value.match(atTextRegex)
 
-    if (slashMatch) {
-      setIsPromptPickerOpen(true)
-      setSlashCommand(slashMatch[1])
-    } else if (atMatch) {
+    if (atMatch) {
       setIsAtPickerOpen(true)
       setAtCommand(atMatch[1])
     } else {
-      setIsPromptPickerOpen(false)
       setIsAtPickerOpen(false)
-      setSlashCommand("")
       setAtCommand("")
     }
 
     setUserInput(value)
-  }
-
-  const handleSelectPrompt = (prompt: Tables<"prompts">) => {
-    setIsPromptPickerOpen(false)
-    setUserInput(userInput.replace(/\/[^ ]*$/, "") + prompt.content)
   }
 
   const handleSelectUserFile = async (file: Tables<"files">) => {
@@ -104,7 +91,6 @@ export const usePromptAndCommand = () => {
 
   return {
     handleInputChange,
-    handleSelectPrompt,
     handleSelectUserFile,
     handleSelectUserCollection
   }

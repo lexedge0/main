@@ -34,8 +34,6 @@ export const useChatHandler = () => {
     selectedWorkspace,
     setSelectedChat,
     setChats,
-    availableLocalModels,
-    availableOpenRouterModels,
     abortController,
     setAbortController,
     chatSettings,
@@ -51,23 +49,17 @@ export const useChatHandler = () => {
     setChatFileItems,
     useRetrieval,
     sourceCount,
-    setIsPromptPickerOpen,
-    setIsAtPickerOpen,
-    selectedPreset,
     setChatSettings,
-    models,
-    isPromptPickerOpen,
+    setIsAtPickerOpen,
     isAtPickerOpen
   } = useContext(ChatbotUIContext)
 
   const chatInputRef = useRef<HTMLTextAreaElement>(null)
-
   useEffect(() => {
-    if (!isPromptPickerOpen || !isAtPickerOpen) {
+    if (!isAtPickerOpen) {
       chatInputRef.current?.focus()
     }
-  }, [isPromptPickerOpen, isAtPickerOpen])
-
+  }, [isAtPickerOpen])
   const handleNewChat = async () => {
     if (!selectedWorkspace) return
 
@@ -84,23 +76,9 @@ export const useChatHandler = () => {
     setNewMessageFiles([])
     setNewMessageImages([])
     setShowFilesDisplay(false)
-    setIsPromptPickerOpen(false)
     setIsAtPickerOpen(false)
 
-    if (selectedPreset) {
-      setChatSettings({
-        model: selectedPreset.model as LLMID,
-        prompt: selectedPreset.prompt,
-        temperature: selectedPreset.temperature,
-        contextLength: selectedPreset.context_length,
-        includeProfileContext: selectedPreset.include_profile_context,
-        includeWorkspaceInstructions:
-          selectedPreset.include_workspace_instructions,
-        embeddingsProvider: selectedPreset.embeddings_provider as
-          | "openai"
-          | "local"
-      })
-    } else if (selectedWorkspace) {
+    if (selectedWorkspace) {
       setChatSettings({
         model: (selectedWorkspace.default_model ||
           "gpt-4-1106-preview") as LLMID,
@@ -142,26 +120,15 @@ export const useChatHandler = () => {
     try {
       setUserInput("")
       setIsGenerating(true)
-      setIsPromptPickerOpen(false)
       setIsAtPickerOpen(false)
       setNewMessageImages([])
 
       const newAbortController = new AbortController()
       setAbortController(newAbortController)
 
-      const modelData = [
-        ...models.map(model => ({
-          modelId: model.model_id as LLMID,
-          modelName: model.name,
-          provider: "custom" as ModelProvider,
-          hostedId: model.id,
-          platformLink: "",
-          imageInput: false
-        })),
-        ...LLM_LIST,
-        ...availableLocalModels,
-        ...availableOpenRouterModels
-      ].find(llm => llm.modelId === chatSettings?.model)
+      const modelData = [...LLM_LIST].find(
+        llm => llm.modelId === chatSettings?.model
+      )
 
       validateChatSettings(
         chatSettings,
@@ -212,33 +179,19 @@ export const useChatHandler = () => {
 
       let generatedText = ""
 
-      if (modelData!.provider === "ollama") {
-        generatedText = await handleLocalChat(
-          payload,
-          profile!,
-          chatSettings!,
-          tempAssistantChatMessage,
-          isRegeneration,
-          newAbortController,
-          setIsGenerating,
-          setFirstTokenReceived,
-          setChatMessages
-        )
-      } else {
-        generatedText = await handleHostedChat(
-          payload,
-          profile!,
-          modelData!,
-          tempAssistantChatMessage,
-          isRegeneration,
-          newAbortController,
-          newMessageImages,
-          chatImages,
-          setIsGenerating,
-          setFirstTokenReceived,
-          setChatMessages
-        )
-      }
+      generatedText = await handleHostedChat(
+        payload,
+        profile!,
+        modelData!,
+        tempAssistantChatMessage,
+        isRegeneration,
+        newAbortController,
+        newMessageImages,
+        chatImages,
+        setIsGenerating,
+        setFirstTokenReceived,
+        setChatMessages
+      )
 
       if (!currentChat) {
         currentChat = await handleCreateChat(

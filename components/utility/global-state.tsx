@@ -7,11 +7,6 @@ import { getProfileByUserId } from "@/db/profile"
 import { getWorkspaceImageFromStorage } from "@/db/storage/workspace-images"
 import { getWorkspacesByUserId } from "@/db/workspaces"
 import { convertBlobToBase64 } from "@/lib/blob-to-b64"
-import {
-  fetchHostedModels,
-  fetchOllamaModels,
-  fetchOpenRouterModels
-} from "@/lib/models/fetch-models"
 import { supabase } from "@/lib/supabase/browser-client"
 import { Tables } from "@/supabase/types"
 import {
@@ -42,27 +37,15 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [chats, setChats] = useState<Tables<"chats">[]>([])
   const [files, setFiles] = useState<Tables<"files">[]>([])
   const [folders, setFolders] = useState<Tables<"folders">[]>([])
-  const [models, setModels] = useState<Tables<"models">[]>([])
-  const [presets, setPresets] = useState<Tables<"presets">[]>([])
-  const [prompts, setPrompts] = useState<Tables<"prompts">[]>([])
   const [workspaces, setWorkspaces] = useState<Tables<"workspaces">[]>([])
 
   // MODELS STORE
   const [envKeyMap, setEnvKeyMap] = useState<Record<string, VALID_ENV_KEYS>>({})
-  const [availableHostedModels, setAvailableHostedModels] = useState<LLM[]>([])
-  const [availableLocalModels, setAvailableLocalModels] = useState<LLM[]>([])
-  const [availableOpenRouterModels, setAvailableOpenRouterModels] = useState<
-    OpenRouterLLM[]
-  >([])
 
   // WORKSPACE STORE
   const [selectedWorkspace, setSelectedWorkspace] =
     useState<Tables<"workspaces"> | null>(null)
   const [workspaceImages, setWorkspaceImages] = useState<WorkspaceImage[]>([])
-
-  // PRESET STORE
-  const [selectedPreset, setSelectedPreset] =
-    useState<Tables<"presets"> | null>(null)
 
   // ASSISTANT STORE
   const [openaiAssistants, setOpenaiAssistants] = useState<any[]>([])
@@ -71,13 +54,14 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [userInput, setUserInput] = useState<string>("")
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [chatSettings, setChatSettings] = useState<ChatSettings>({
-    model: "gpt-4-turbo-preview",
-    prompt: "You are a helpful AI assistant.",
-    temperature: 0.5,
-    contextLength: 4000,
-    includeProfileContext: true,
-    includeWorkspaceInstructions: true,
-    embeddingsProvider: "openai"
+    model: process.env.LLM_TO_USE || "claude-2.1",
+    prompt: process.env.SYSTEM_PROMPT || "You are a helpful AI assistant.",
+    temperature: parseFloat(process.env.DEFAULT_TEMPERATURE || "0.5"),
+    contextLength: parseInt(process.env.DEFAULT_CONTEXT_LENGTH || "4000", 10),
+    includeProfileContext: process.env.INCLUDE_PROFILE_CONTEXT === "true",
+    includeWorkspaceInstructions:
+      process.env.INCLUDE_WORKSPACE_INSTRUCTIONS === "true",
+    embeddingsProvider: process.env.EMBEDDINGS_PROVIDER || "openai"
   })
   const [selectedChat, setSelectedChat] = useState<Tables<"chats"> | null>(null)
   const [chatFileItems, setChatFileItems] = useState<Tables<"file_items">[]>([])
@@ -89,8 +73,6 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
     useState<AbortController | null>(null)
 
   // CHAT INPUT COMMAND STORE
-  const [isPromptPickerOpen, setIsPromptPickerOpen] = useState(false)
-  const [slashCommand, setSlashCommand] = useState("")
   const [isAtPickerOpen, setIsAtPickerOpen] = useState(false)
   const [atCommand, setAtCommand] = useState("")
   const [focusPrompt, setFocusPrompt] = useState(false)
@@ -156,29 +138,6 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
 
     ;(async () => {
       const profile = await fetchStartingData()
-
-      if (profile) {
-        const hostedModelRes = await fetchHostedModels(profile)
-        if (!hostedModelRes) return
-
-        setEnvKeyMap(hostedModelRes.envKeyMap)
-        setAvailableHostedModels(hostedModelRes.hostedModels)
-
-        if (
-          profile["openrouter_api_key"] ||
-          hostedModelRes.envKeyMap["openrouter"]
-        ) {
-          const openRouterModels = await fetchOpenRouterModels()
-          if (!openRouterModels) return
-          setAvailableOpenRouterModels(openRouterModels)
-        }
-      }
-
-      if (process.env.NEXT_PUBLIC_OLLAMA_URL) {
-        const localModels = await fetchOllamaModels()
-        if (!localModels) return
-        setAvailableLocalModels(localModels)
-      }
     })()
   }, [router]) // Removed fetchStartingData from the dependency array
 
@@ -198,34 +157,14 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         setFiles,
         folders,
         setFolders,
-        models,
-        setModels,
-        presets,
-        setPresets,
-        prompts,
-        setPrompts,
         workspaces,
         setWorkspaces,
-
-        // MODELS STORE
-        envKeyMap,
-        setEnvKeyMap,
-        availableHostedModels,
-        setAvailableHostedModels,
-        availableLocalModels,
-        setAvailableLocalModels,
-        availableOpenRouterModels,
-        setAvailableOpenRouterModels,
 
         // WORKSPACE STORE
         selectedWorkspace,
         setSelectedWorkspace,
         workspaceImages,
         setWorkspaceImages,
-
-        // PRESET STORE
-        selectedPreset,
-        setSelectedPreset,
 
         // ASSISTANT STORE
         openaiAssistants,
@@ -252,10 +191,6 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         setAbortController,
 
         // CHAT INPUT COMMAND STORE
-        isPromptPickerOpen,
-        setIsPromptPickerOpen,
-        slashCommand,
-        setSlashCommand,
         isAtPickerOpen,
         setIsAtPickerOpen,
         atCommand,

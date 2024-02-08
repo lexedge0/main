@@ -7,9 +7,6 @@ import { FC, useContext, useState } from "react"
 import { Button } from "../ui/button"
 import { CreateCollection } from "./items/collections/create-collection"
 import { CreateFile } from "./items/files/create-file"
-import { CreateModel } from "./items/models/create-model"
-import { CreatePreset } from "./items/presets/create-preset"
-import { CreatePrompt } from "./items/prompts/create-prompt"
 
 interface SidebarCreateButtonsProps {
   contentType: ContentType
@@ -23,9 +20,6 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
   const { profile, selectedWorkspace, folders, setFolders } =
     useContext(ChatbotUIContext)
   const { handleNewChat } = useChatHandler()
-
-  const [isCreatingPrompt, setIsCreatingPrompt] = useState(false)
-  const [isCreatingPreset, setIsCreatingPreset] = useState(false)
   const [isCreatingFile, setIsCreatingFile] = useState(false)
   const [isCreatingCollection, setIsCreatingCollection] = useState(false)
   const [isCreatingModel, setIsCreatingModel] = useState(false)
@@ -51,16 +45,6 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
           handleNewChat()
         }
 
-      case "presets":
-        return async () => {
-          setIsCreatingPreset(true)
-        }
-
-      case "prompts":
-        return async () => {
-          setIsCreatingPrompt(true)
-        }
-
       case "files":
         return async () => {
           setIsCreatingFile(true)
@@ -69,11 +53,6 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
       case "collections":
         return async () => {
           setIsCreatingCollection(true)
-        }
-
-      case "models":
-        return async () => {
-          setIsCreatingModel(true)
         }
 
       default:
@@ -96,20 +75,6 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
         </Button>
       )}
 
-      {isCreatingPrompt && (
-        <CreatePrompt
-          isOpen={isCreatingPrompt}
-          onOpenChange={setIsCreatingPrompt}
-        />
-      )}
-
-      {isCreatingPreset && (
-        <CreatePreset
-          isOpen={isCreatingPreset}
-          onOpenChange={setIsCreatingPreset}
-        />
-      )}
-
       {isCreatingFile && (
         <CreateFile isOpen={isCreatingFile} onOpenChange={setIsCreatingFile} />
       )}
@@ -118,13 +83,6 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
         <CreateCollection
           isOpen={isCreatingCollection}
           onOpenChange={setIsCreatingCollection}
-        />
-      )}
-
-      {isCreatingModel && (
-        <CreateModel
-          isOpen={isCreatingModel}
-          onOpenChange={setIsCreatingModel}
         />
       )}
     </div>

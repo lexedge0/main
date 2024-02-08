@@ -33,12 +33,9 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     userInput,
     chatMessages,
     isGenerating,
-    selectedPreset,
     focusPrompt,
     setFocusPrompt,
     focusFile,
-    isPromptPickerOpen,
-    setIsPromptPickerOpen,
     isAtPickerOpen,
     setFocusFile,
     chatSettings
@@ -61,23 +58,12 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     setTimeout(() => {
       handleFocusChatInput()
     }, 200) // FIX: hacky
-  }, [selectedPreset, handleFocusChatInput])
+  }, [handleFocusChatInput])
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (!isTyping && event.key === "Enter" && !event.shiftKey) {
       event.preventDefault()
-      setIsPromptPickerOpen(false)
       handleSendMessage(userInput, chatMessages, false)
-    }
-
-    if (
-      isPromptPickerOpen &&
-      (event.key === "Tab" ||
-        event.key === "ArrowUp" ||
-        event.key === "ArrowDown")
-    ) {
-      event.preventDefault()
-      setFocusPrompt(!focusPrompt)
     }
 
     if (
@@ -140,7 +126,7 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
           textareaRef={chatInputRef}
           className="ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring text-md flex w-full resize-none rounded-md border-none bg-transparent px-14 py-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
           placeholder={t(
-            `Ask anything. Type "/" for prompts and "#" for files.`
+            `Ask any legal question. Type "#" for files and collections.`
           )}
           onValueChange={handleInputChange}
           value={userInput}

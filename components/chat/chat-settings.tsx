@@ -37,6 +37,7 @@ export const ChatSettings: FC<ChatSettingsProps> = ({}) => {
         CHAT_SETTING_LIMITS[chatSettings.model]?.MAX_CONTEXT_LENGTH || 4096
       )
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatSettings?.model])
 
   if (!chatSettings) return null

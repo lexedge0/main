@@ -25,34 +25,14 @@ interface ChatbotUIContext {
   setFiles: Dispatch<SetStateAction<Tables<"files">[]>>
   folders: Tables<"folders">[]
   setFolders: Dispatch<SetStateAction<Tables<"folders">[]>>
-  models: Tables<"models">[]
-  setModels: Dispatch<SetStateAction<Tables<"models">[]>>
-  presets: Tables<"presets">[]
-  setPresets: Dispatch<SetStateAction<Tables<"presets">[]>>
-  prompts: Tables<"prompts">[]
-  setPrompts: Dispatch<SetStateAction<Tables<"prompts">[]>>
   workspaces: Tables<"workspaces">[]
   setWorkspaces: Dispatch<SetStateAction<Tables<"workspaces">[]>>
-
-  // MODELS STORE
-  envKeyMap: Record<string, VALID_ENV_KEYS>
-  setEnvKeyMap: Dispatch<SetStateAction<Record<string, VALID_ENV_KEYS>>>
-  availableHostedModels: LLM[]
-  setAvailableHostedModels: Dispatch<SetStateAction<LLM[]>>
-  availableLocalModels: LLM[]
-  setAvailableLocalModels: Dispatch<SetStateAction<LLM[]>>
-  availableOpenRouterModels: OpenRouterLLM[]
-  setAvailableOpenRouterModels: Dispatch<SetStateAction<OpenRouterLLM[]>>
 
   // WORKSPACE STORE
   selectedWorkspace: Tables<"workspaces"> | null
   setSelectedWorkspace: Dispatch<SetStateAction<Tables<"workspaces"> | null>>
   workspaceImages: WorkspaceImage[]
   setWorkspaceImages: Dispatch<SetStateAction<WorkspaceImage[]>>
-
-  // PRESET STORE
-  selectedPreset: Tables<"presets"> | null
-  setSelectedPreset: Dispatch<SetStateAction<Tables<"presets"> | null>>
 
   // ASSISTANT STORE
   openaiAssistants: any[]
@@ -79,10 +59,6 @@ interface ChatbotUIContext {
   setIsGenerating: Dispatch<SetStateAction<boolean>>
 
   // CHAT INPUT COMMAND STORE
-  isPromptPickerOpen: boolean
-  setIsPromptPickerOpen: Dispatch<SetStateAction<boolean>>
-  slashCommand: string
-  setSlashCommand: Dispatch<SetStateAction<string>>
   isAtPickerOpen: boolean
   setIsAtPickerOpen: Dispatch<SetStateAction<boolean>>
   atCommand: string
@@ -125,34 +101,18 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   setFiles: () => {},
   folders: [],
   setFolders: () => {},
-  models: [],
-  setModels: () => {},
-  presets: [],
-  setPresets: () => {},
-  prompts: [],
-  setPrompts: () => {},
   workspaces: [],
   setWorkspaces: () => {},
 
   // MODELS STORE
   envKeyMap: {},
   setEnvKeyMap: () => {},
-  availableHostedModels: [],
-  setAvailableHostedModels: () => {},
-  availableLocalModels: [],
-  setAvailableLocalModels: () => {},
-  availableOpenRouterModels: [],
-  setAvailableOpenRouterModels: () => {},
 
   // WORKSPACE STORE
   selectedWorkspace: null,
   setSelectedWorkspace: () => {},
   workspaceImages: [],
   setWorkspaceImages: () => {},
-
-  // PRESET STORE
-  selectedPreset: null,
-  setSelectedPreset: () => {},
 
   // ASSISTANT STORE
   openaiAssistants: [],
@@ -179,10 +139,6 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   setAbortController: () => {},
 
   // CHAT INPUT COMMAND STORE
-  isPromptPickerOpen: false,
-  setIsPromptPickerOpen: () => {},
-  slashCommand: "",
-  setSlashCommand: () => {},
   isAtPickerOpen: false,
   setIsAtPickerOpen: () => {},
   atCommand: "",

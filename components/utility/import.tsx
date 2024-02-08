@@ -2,8 +2,6 @@ import { ChatbotUIContext } from "@/context/context"
 import { createChats } from "@/db/chats"
 import { createCollections } from "@/db/collections"
 import { createFiles } from "@/db/files"
-import { createPresets } from "@/db/presets"
-import { createPrompts } from "@/db/prompts"
 import { IconUpload, IconX } from "@tabler/icons-react"
 import { FC, useContext, useRef, useState } from "react"
 import { toast } from "sonner"
@@ -22,15 +20,8 @@ import { Input } from "../ui/input"
 interface ImportProps {}
 
 export const Import: FC<ImportProps> = ({}) => {
-  const {
-    profile,
-    selectedWorkspace,
-    setChats,
-    setPresets,
-    setPrompts,
-    setFiles,
-    setCollections
-  } = useContext(ChatbotUIContext)
+  const { profile, selectedWorkspace, setChats, setFiles, setCollections } =
+    useContext(ChatbotUIContext)
 
   const inputRef = useRef<HTMLInputElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -39,22 +30,16 @@ export const Import: FC<ImportProps> = ({}) => {
   const [importList, setImportList] = useState<Array<Record<string, any>>>([])
   const [importCounts, setImportCounts] = useState<{
     chats: number
-    presets: number
-    prompts: number
     files: number
     collections: number
   }>({
     chats: 0,
-    presets: 0,
-    prompts: 0,
     files: 0,
     collections: 0
   })
 
   const stateUpdateFunctions = {
     chats: setChats,
-    presets: setPresets,
-    prompts: setPrompts,
     files: setFiles,
     collections: setCollections
   }
@@ -88,13 +73,7 @@ export const Import: FC<ImportProps> = ({}) => {
       })
 
       setImportCounts(prevCounts => {
-        const countTypes = [
-          "chats",
-          "presets",
-          "prompts",
-          "files",
-          "collections"
-        ]
+        const countTypes = ["chats", "files", "collections"]
         const newCounts: any = { ...prevCounts }
         countTypes.forEach(type => {
           newCounts[type] = uniqueResults.filter(
@@ -122,8 +101,6 @@ export const Import: FC<ImportProps> = ({}) => {
     setImportList([])
     setImportCounts({
       chats: 0,
-      presets: 0,
-      prompts: 0,
       files: 0,
       collections: 0
     })
@@ -136,8 +113,6 @@ export const Import: FC<ImportProps> = ({}) => {
 
     const saveData: any = {
       chats: [],
-      presets: [],
-      prompts: [],
       files: [],
       collections: []
     }
@@ -151,8 +126,6 @@ export const Import: FC<ImportProps> = ({}) => {
 
     const createdItems = {
       chats: await createChats(saveData.chats),
-      presets: await createPresets(saveData.presets, selectedWorkspace.id),
-      prompts: await createPrompts(saveData.prompts, selectedWorkspace.id),
       files: await createFiles(saveData.files, selectedWorkspace.id),
       collections: await createCollections(
         saveData.collections,
@@ -173,8 +146,6 @@ export const Import: FC<ImportProps> = ({}) => {
     setImportList([])
     setImportCounts({
       chats: 0,
-      presets: 0,
-      prompts: 0,
       files: 0,
       collections: 0
     })

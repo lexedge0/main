@@ -28,24 +28,6 @@ import {
   getFileWorkspacesByFileId,
   updateFile
 } from "@/db/files"
-import {
-  createModelWorkspaces,
-  deleteModelWorkspace,
-  getModelWorkspacesByModelId,
-  updateModel
-} from "@/db/models"
-import {
-  createPresetWorkspaces,
-  deletePresetWorkspace,
-  getPresetWorkspacesByPresetId,
-  updatePreset
-} from "@/db/presets"
-import {
-  createPromptWorkspaces,
-  deletePromptWorkspace,
-  getPromptWorkspacesByPromptId,
-  updatePrompt
-} from "@/db/prompts"
 import { convertBlobToBase64 } from "@/lib/blob-to-b64"
 import { Tables, TablesUpdate } from "@/supabase/types"
 import { CollectionFile, ContentType, DataItemType } from "@/types"
@@ -71,16 +53,8 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
   updateState,
   isTyping
 }) => {
-  const {
-    workspaces,
-    selectedWorkspace,
-    setChats,
-    setPresets,
-    setPrompts,
-    setFiles,
-    setCollections,
-    setModels
-  } = useContext(ChatbotUIContext)
+  const { workspaces, selectedWorkspace, setChats, setFiles, setCollections } =
+    useContext(ChatbotUIContext)
 
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -103,16 +77,13 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
   const fetchDataFunctions = useMemo(
     () => ({
       chats: null,
-      presets: null,
-      prompts: null,
       files: null,
       collections: async (collectionId: string) => {
         const collectionFiles =
           await getCollectionFilesByCollectionId(collectionId)
         setStartingCollectionFiles(collectionFiles.files)
         setSelectedCollectionFiles([])
-      },
-      models: null
+      }
     }),
     [setStartingCollectionFiles, setSelectedCollectionFiles]
   )
@@ -120,24 +91,12 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
   const fetchWorkpaceFunctions = useMemo(
     () => ({
       chats: null,
-      presets: async (presetId: string) => {
-        const item = await getPresetWorkspacesByPresetId(presetId)
-        return item.workspaces
-      },
-      prompts: async (promptId: string) => {
-        const item = await getPromptWorkspacesByPromptId(promptId)
-        return item.workspaces
-      },
       files: async (fileId: string) => {
         const item = await getFileWorkspacesByFileId(fileId)
         return item.workspaces
       },
       collections: async (collectionId: string) => {
         const item = await getCollectionWorkspacesByCollectionId(collectionId)
-        return item.workspaces
-      },
-      models: async (modelId: string) => {
-        const item = await getModelWorkspacesByModelId(modelId)
         return item.workspaces
       }
     }),
@@ -184,16 +143,13 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
 
   const renderState = {
     chats: null,
-    presets: null,
-    prompts: null,
     files: null,
     collections: {
       startingCollectionFiles,
       setStartingCollectionFiles,
       selectedCollectionFiles,
       setSelectedCollectionFiles
-    },
-    models: null
+    }
   }
 
   const handleWorkspaceUpdates = async (
@@ -252,34 +208,6 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
 
   const updateFunctions = {
     chats: updateChat,
-    presets: async (presetId: string, updateState: TablesUpdate<"presets">) => {
-      const updatedPreset = await updatePreset(presetId, updateState)
-
-      await handleWorkspaceUpdates(
-        startingWorkspaces,
-        selectedWorkspaces,
-        presetId,
-        deletePresetWorkspace,
-        createPresetWorkspaces as any,
-        "preset_id"
-      )
-
-      return updatedPreset
-    },
-    prompts: async (promptId: string, updateState: TablesUpdate<"prompts">) => {
-      const updatedPrompt = await updatePrompt(promptId, updateState)
-
-      await handleWorkspaceUpdates(
-        startingWorkspaces,
-        selectedWorkspaces,
-        promptId,
-        deletePromptWorkspace,
-        createPromptWorkspaces as any,
-        "prompt_id"
-      )
-
-      return updatedPrompt
-    },
     files: async (fileId: string, updateState: TablesUpdate<"files">) => {
       const updatedFile = await updateFile(fileId, updateState)
 
@@ -339,30 +267,13 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
       )
 
       return updatedCollection
-    },
-    models: async (modelId: string, updateState: TablesUpdate<"models">) => {
-      const updatedModel = await updateModel(modelId, updateState)
-
-      await handleWorkspaceUpdates(
-        startingWorkspaces,
-        selectedWorkspaces,
-        modelId,
-        deleteModelWorkspace,
-        createModelWorkspaces as any,
-        "model_id"
-      )
-
-      return updatedModel
     }
   }
 
   const stateUpdateFunctions = {
     chats: setChats,
-    presets: setPresets,
-    prompts: setPrompts,
     files: setFiles,
-    collections: setCollections,
-    models: setModels
+    collections: setCollections
   }
 
   const handleUpdate = async () => {

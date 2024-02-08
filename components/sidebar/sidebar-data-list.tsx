@@ -2,9 +2,6 @@ import { ChatbotUIContext } from "@/context/context"
 import { updateChat } from "@/db/chats"
 import { updateCollection } from "@/db/collections"
 import { updateFile } from "@/db/files"
-import { updateModel } from "@/db/models"
-import { updatePreset } from "@/db/presets"
-import { updatePrompt } from "@/db/prompts"
 import { cn } from "@/lib/utils"
 import { Tables } from "@/supabase/types"
 import { ContentType, DataItemType, DataListType } from "@/types"
@@ -14,9 +11,6 @@ import { ChatItem } from "./items/chat/chat-item"
 import { CollectionItem } from "./items/collections/collection-item"
 import { FileItem } from "./items/files/file-item"
 import { Folder } from "./items/folders/folder-item"
-import { ModelItem } from "./items/models/model-item"
-import { PresetItem } from "./items/presets/preset-item"
-import { PromptItem } from "./items/prompts/prompt-item"
 
 interface SidebarDataListProps {
   contentType: ContentType
@@ -29,14 +23,7 @@ export const SidebarDataList: FC<SidebarDataListProps> = ({
   data,
   folders
 }) => {
-  const {
-    setChats,
-    setPresets,
-    setPrompts,
-    setFiles,
-    setCollections,
-    setModels
-  } = useContext(ChatbotUIContext)
+  const { setChats, setFiles, setCollections } = useContext(ChatbotUIContext)
 
   const divRef = useRef<HTMLDivElement>(null)
 
@@ -51,12 +38,6 @@ export const SidebarDataList: FC<SidebarDataListProps> = ({
       case "chats":
         return <ChatItem key={item.id} chat={item as Tables<"chats">} />
 
-      case "presets":
-        return <PresetItem key={item.id} preset={item as Tables<"presets">} />
-
-      case "prompts":
-        return <PromptItem key={item.id} prompt={item as Tables<"prompts">} />
-
       case "files":
         return <FileItem key={item.id} file={item as Tables<"files">} />
 
@@ -67,9 +48,6 @@ export const SidebarDataList: FC<SidebarDataListProps> = ({
             collection={item as Tables<"collections">}
           />
         )
-
-      case "models":
-        return <ModelItem key={item.id} model={item as Tables<"models">} />
 
       default:
         return null
@@ -117,20 +95,14 @@ export const SidebarDataList: FC<SidebarDataListProps> = ({
 
   const updateFunctions = {
     chats: updateChat,
-    presets: updatePreset,
-    prompts: updatePrompt,
     files: updateFile,
-    collections: updateCollection,
-    models: updateModel
+    collections: updateCollection
   }
 
   const stateUpdateFunctions = {
     chats: setChats,
-    presets: setPresets,
-    prompts: setPrompts,
     files: setFiles,
-    collections: setCollections,
-    models: setModels
+    collections: setCollections
   }
 
   const updateFolder = async (itemId: string, folderId: string | null) => {

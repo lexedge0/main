@@ -17,12 +17,8 @@ interface ChatItemProps {
 }
 
 export const ChatItem: FC<ChatItemProps> = ({ chat }) => {
-  const {
-    selectedWorkspace,
-    selectedChat,
-    availableLocalModels,
-    availableOpenRouterModels
-  } = useContext(ChatbotUIContext)
+  const { selectedWorkspace, selectedChat, availableOpenRouterModels } =
+    useContext(ChatbotUIContext)
 
   const router = useRouter()
   const params = useParams()
@@ -42,11 +38,9 @@ export const ChatItem: FC<ChatItemProps> = ({ chat }) => {
     }
   }
 
-  const MODEL_DATA = [
-    ...LLM_LIST,
-    ...availableLocalModels,
-    ...availableOpenRouterModels
-  ].find(llm => llm.modelId === chat.model) as LLM
+  const MODEL_DATA = [...LLM_LIST].find(
+    llm => llm.modelId === chat.model
+  ) as LLM
 
   return (
     <div

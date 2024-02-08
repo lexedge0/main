@@ -5,7 +5,6 @@ import { CHAT_SETTING_LIMITS } from "@/lib/chat-setting-limits"
 import { ChatSettings } from "@/types"
 import { IconInfoCircle } from "@tabler/icons-react"
 import { FC, useContext } from "react"
-import { ModelSelect } from "../models/model-select"
 import { AdvancedSettings } from "./advanced-settings"
 import { Checkbox } from "./checkbox"
 import { Label } from "./label"
@@ -33,23 +32,12 @@ export const ChatSettingsForm: FC<ChatSettingsFormProps> = ({
   useAdvancedDropdown = true,
   showTooltip = true
 }) => {
-  const { profile, availableLocalModels } = useContext(ChatbotUIContext)
+  const { profile } = useContext(ChatbotUIContext)
 
   if (!profile) return null
 
   return (
     <div className="space-y-3">
-      <div className="space-y-1">
-        <Label>Model</Label>
-
-        <ModelSelect
-          selectedModelId={chatSettings.model}
-          onSelectModel={model => {
-            onChangeChatSettings({ ...chatSettings, model })
-          }}
-        />
-      </div>
-
       <div className="space-y-1">
         <Label>Prompt</Label>
 
@@ -97,18 +85,12 @@ const AdvancedContent: FC<AdvancedContentProps> = ({
   onChangeChatSettings,
   showTooltip
 }) => {
-  const { profile, selectedWorkspace, availableOpenRouterModels } =
-    useContext(ChatbotUIContext)
-
-  function findOpenRouterModel(modelId: string) {
-    return availableOpenRouterModels.find(model => model.modelId === modelId)
-  }
+  const { profile, selectedWorkspace } = useContext(ChatbotUIContext)
 
   const MODEL_LIMITS = CHAT_SETTING_LIMITS[chatSettings.model] || {
     MIN_TEMPERATURE: 0,
     MAX_TEMPERATURE: 1,
-    MAX_CONTEXT_LENGTH:
-      findOpenRouterModel(chatSettings.model)?.maxContext || 4096
+    MAX_CONTEXT_LENGTH: 4096
   }
 
   return (
