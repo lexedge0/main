@@ -87,20 +87,7 @@ export default function SetupPage() {
       has_onboarded: true,
       display_name: displayName,
       username,
-      openai_api_key: openaiAPIKey,
-      openai_organization_id: openaiOrgID,
-      anthropic_api_key: anthropicAPIKey,
-      google_gemini_api_key: googleGeminiAPIKey,
-      mistral_api_key: mistralAPIKey,
-      perplexity_api_key: perplexityAPIKey,
-      openrouter_api_key: openrouterAPIKey,
-      use_azure_openai: useAzureOpenai,
-      azure_openai_api_key: azureOpenaiAPIKey,
-      azure_openai_endpoint: azureOpenaiEndpoint,
-      azure_openai_35_turbo_id: azureOpenai35TurboID,
-      azure_openai_45_turbo_id: azureOpenai45TurboID,
-      azure_openai_45_vision_id: azureOpenai45VisionID,
-      azure_openai_embeddings_id: azureOpenaiEmbeddingsID
+      openai_api_key: process.env.OPENAI_API_KEY
     }
 
     const updatedProfile = await updateProfile(profile.id, updateProfilePayload)
@@ -141,7 +128,7 @@ export default function SetupPage() {
         )
 
       // Finish Step
-      case 3:
+      case 2:
         return (
           <StepContainer
             stepDescription="You are all set up!"
