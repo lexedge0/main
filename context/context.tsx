@@ -27,6 +27,9 @@ interface ChatbotUIContext {
   setFolders: Dispatch<SetStateAction<Tables<"folders">[]>>
   workspaces: Tables<"workspaces">[]
   setWorkspaces: Dispatch<SetStateAction<Tables<"workspaces">[]>>
+  
+  // MODELS STORE
+  envKeyMap: Record<string, VALID_ENV_KEYS>
   setEnvKeyMap: Dispatch<SetStateAction<Record<string, VALID_ENV_KEYS>>>
 
   // WORKSPACE STORE
@@ -60,6 +63,7 @@ interface ChatbotUIContext {
   setIsGenerating: Dispatch<SetStateAction<boolean>>
 
   // CHAT INPUT COMMAND STORE
+  slashCommand: string
   isAtPickerOpen: boolean
   setIsAtPickerOpen: Dispatch<SetStateAction<boolean>>
   atCommand: string
