@@ -64,6 +64,7 @@ interface ChatbotUIContext {
 
   // CHAT INPUT COMMAND STORE
   slashCommand: string
+  setSlashCommand: Dispatch<SetStateAction<string>> // Modified here
   isAtPickerOpen: boolean
   setIsAtPickerOpen: Dispatch<SetStateAction<boolean>>
   atCommand: string
@@ -144,6 +145,8 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   setAbortController: () => {},
 
   // CHAT INPUT COMMAND STORE
+  slashCommand: "", // Initial value modified here
+  setSlashCommand: () => {}, // Initial value added here
   isAtPickerOpen: false,
   setIsAtPickerOpen: () => {},
   atCommand: "",
