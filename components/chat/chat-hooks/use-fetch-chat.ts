@@ -2,9 +2,11 @@
 import { useContext } from "react"
 import { ChatbotUIContext } from "@/context/context"
 import { getChatById } from "@/db/chats"
+import { useState } from "react"
 
 export const useFetchChat = (chatId: string | undefined) => {
   const { setSelectedChat, setChatSettings } = useContext(ChatbotUIContext)
+  const [loading, setLoading] = useState(true)
 
   const fetchChat = async () => {
     if (!chatId) {

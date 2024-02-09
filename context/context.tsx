@@ -27,7 +27,7 @@ interface ChatbotUIContext {
   setFolders: Dispatch<SetStateAction<Tables<"folders">[]>>
   workspaces: Tables<"workspaces">[]
   setWorkspaces: Dispatch<SetStateAction<Tables<"workspaces">[]>>
-  
+
   // MODELS STORE
   envKeyMap: Record<string, VALID_ENV_KEYS>
   setEnvKeyMap: Dispatch<SetStateAction<Record<string, VALID_ENV_KEYS>>>
